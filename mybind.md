@@ -1,6 +1,6 @@
 
 ```javascript
-var sum = 100;
+let sum = 100;
 
 var sumFunction = function() {
 
@@ -14,12 +14,10 @@ function mybind (func, obj) {
 	let args = [].slice.call(arguments, 2);
 
 	return function () {
-
 		return func.apply(obj, args.concat([].slice.call(arguments)));
 	}
 }
 
-var bindedSum = mybind(sumFunction, {sum: 10}, 20, 30);
+let bindedSum = mybind(sumFunction, {sum: 10}, 20, 30);
 console.log(bindedSum(40, 50)); // 10 + 20 + 30 + 40 + 50 === 150
-
 ```
