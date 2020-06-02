@@ -2,7 +2,7 @@
 ```javascript
 let sum = 100;
 
-var sumFunction = function() {
+let sumFunction = function() {
 
   return [].reduce.call(arguments, function(result, current) {
     return result + current;
