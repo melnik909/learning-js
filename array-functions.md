@@ -1,3 +1,4 @@
+```js
 const countries = [
   {
     name: "USA",
@@ -82,3 +83,4 @@ let getEmptyCountry = function(countries) {
 
 console.log('getEmptyCountry', getEmptyCountry(countries));
 
+```
