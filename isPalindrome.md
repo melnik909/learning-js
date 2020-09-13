@@ -7,6 +7,6 @@ console.log('table', '--false', isPalindrome('table'));
 
 function isPalindrome(str) { 
 	let res = str.replace(/\s/g, '');
-	return res === res.split('').reverse().join('');
+	return res === Array.from(res).reverse().join('');
 }
 ```
