@@ -1,0 +1,87 @@
+
+Symbol([описание])
+описание (Необязательный) - Описание символа, которое может быть использовано во время отладки,
+но не для доступа к самому символу.
+
+Описание: Уникальный и неизменяемый тип данных, который может быть использован
+как идентификатор для свойств объектов.
+
+Примеры:
+
+let user = {
+  name: "Вася"
+};
+
+let id = Symbol("id");
+
+user[id] = 1;
+
+console.log( user[id] ); // 1
+console.log( user.id ); // undefined
+
+let id = Symbol("id");
+
+let user = {
+  name: "Вася",
+  [id]: 123
+};
+
+Особенности:
+
+1. Символы уникальные
+
+let id1 = Symbol("id");
+let id2 = Symbol("id");
+
+console.log(id1 == id2); // false
+
+2. Свойства, чьи ключи – символы, не перебираются циклом for..in.
+
+let id = Symbol("id");
+let user = {
+  name: "Вася",
+  age: 30,
+  [id]: 123
+};
+
+for (let key in user) console.log(key); // name, age (свойства с ключом-символом нет среди перечисленных)
+
+3. Object.keys(user) не выводит ключи – символы
+
+let id = Symbol("id");
+let user = {
+  name: "Вася",
+  age: 30,
+  [id]: 123
+};
+
+Object.keys(user) // name, age
+
+4. Object.assign копирует символьные свойства:
+
+let id = Symbol("id");
+let user = {
+  [id]: 123
+};
+
+let clone = Object.assign({}, user);
+
+console.log( clone[id] ); // 123
+
+5. Символы не преобразуются автоматически в строки
+
+let id = Symbol("id");
+alert(id); // TypeError: Cannot convert a Symbol value to a string
+
+let id = Symbol("id");
+alert(id.toString()); // Symbol(id), теперь работает
+
+let id = Symbol("id");
+alert(id.description); // id
+
+Где использовать:
+
+Символы позволяют создавать «скрытые» свойства объектов, к которым нельзя нечаянно
+обратиться и перезаписать их из других частей программы.
+
+https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Symbol

@@ -1,0 +1,332 @@
+Флаги
+
+i - С этим флагом поиск не зависит от регистра: нет разницы между A и a
+g - С этим флагом поиск ищет все совпадения, без него – только первое.
+m - Многострочный режим
+s - Включает режим «dotall», при котором точка . может соответствовать символу перевода строки \n
+u - Включает полную поддержку юникода. Флаг разрешает корректную обработку суррогатных пар
+y - Режим поиска на конкретной позиции в тексте
+
+=====
+
+str.match(regexp)
+
+Метод str.match(regexp) для строки str возвращает совпадения с регулярным выражением regexp.
+
+Способы:
+
+1. Если у регулярного выражения есть флаг g, то он возвращает массив всех совпадений
+
+"Любо, братцы, любо!".match(/любо/gi) // ["Любо", "любо"]
+
+2. Если такого флага нет, то возвращает только первое совпадение в виде массива, в
+котором по индексу 0 находится совпадение, и есть свойства с дополнительной информацией о нём
+
+"Любо, братцы, любо!".match(/любо/i) // ["Любо", index: 0, input: "Любо, братцы, любо!", groups: undefined]
+
+3. Если совпадений нет, то, вне зависимости от наличия флага g, возвращается null.
+
+=====
+
+str.replace(regexp, replacement)
+
+Метод str.replace(regexp, replacement) заменяет совпадения с regexp в строке str на replacement
+
+"We will, we will".replace(/we/i, "I") // I will, we will
+"We will, we will".replace(/we/ig, "I") // I will, I will
+"We will, we will".replace(/we/g, "I") // We will, I will
+
+$&	вставляет всё найденное совпадение
+$`	вставляет часть строки до совпадения
+$'	вставляет часть строки после совпадения
+$n	если n это 1-2 значное число, вставляет содержимое n-й скобочной группы регулярного выражения
+$<name>	вставляет содержимое скобочной группы с именем name
+$$	вставляет символ "$"
+
+"Люблю HTML".replace(/HTML/, "$& и JavaScript") // Люблю HTML и JavaScript
+
+=====
+
+regexp.test(str)
+Метод regexp.test(str) проверяет, есть ли хоть одно совпадение, если да, то возвращает true, иначе false.
+
+/люблю/i.test("Я ЛюБлЮ JavaScript") // true
+
+=====
+
+Символьные классы
+
+\d - в регулярном выражении соответствует «любой одной цифре»
+
+"+7(903)-123-45-67".match(/\d/g) // ["7", "9", "0", "3", "1", "2", "3", "4", "5", "6", "7"]
+
+\D - Не цифра: любой символ, кроме \d, например буква.
+
+"HTML 5, CSS 4".match(/\D/g) // ["H", "T", "M", "L", " ", ",", " ", "C", "S", "S", " "]
+
+\s - Пробельные символы: включает в себя символ пробела, табуляции \t,
+перевода строки \n и некоторые другие редкие пробельные символы, обозначаемые как \v, \f и \r.
+
+"Любо, братцы, любо!".match(/любо/gi) // [" ", " "]
+"Любо, братцы,  любо!".match(/\s/g) // [" ", " ", " "] в строке два пробела перед любо!
+
+\S Не пробел: любой символ, кроме \s, например буква.
+
+"HTML 5, CSS 4".match(/\S/g) // ["H", "T", "M", "L", "5", ",", "C", "S", "S", "4"]
+
+\w - Символ «слова», а точнее – буква латинского алфавита или цифра или подчёркивание _.
+Нелатинские буквы не являются частью класса \w, то есть буква русского алфавита не подходит.
+
+"1 a".match(/\w/g) // ["1", "a"]
+"Любо, братцы, любо!".match(/\w/g) // null
+
+\W Любой символ, кроме \w, то есть не буквы из латиницы, не знак подчёркивания и не цифра.
+В частности, русские буквы принадлежат этому классу.
+
+"HTML 5, CSS 4".match(/\W/g) // [" ", ",", " ", " "]
+"Любо, братцы, любо!".match(/\W/g) // ["Л", "ю", "б", "о", ",", " ", "б", "р", "а", "т", "ц", "ы", ",", " ", "л", "ю", "б", "о", "!"]
+
+. - специальный символьный класс, который соответствует «любому символу, кроме новой строки»
+
+"CSS4 CS-4 CS 4".match(/CS.4/g) // ["CSS4", "CS-4", "CS 4"]
+
+Точка не соответствует символу новой строки \n.
+
+"A\nB".match(/A.B/g) // null
+
+Если регулярное выражение имеет флаг s, то точка . соответствует буквально любому символу
+
+"A\nB".match(/A.B/gs) // ["A↵B"]
+
+=====
+
+Комбинации
+
+"Есть ли стандарт CSS4?".match(/CSS\d/g) // ["CSS4"]
+"Is there the CSS4 standard?".match(/\w\s/g) // ["s ", "e ", "e ", "4 "]
+
+=====
+
+Якоря
+
+^ - означает совпадение с началом текста
+$ - означает совпадение с концом текста
+
+/^Mary/.test("Mary had a little lamb") // true
+/^Mary/.test("mary had a little lamb") // false
+/^Mary/i.test("mary had a little lamb") // true
+/^\d/i.test("123 mary had a little lamb") // true
+
+/lamb$/.test("Mary had a little lamb") // true
+/lamb$/.test("mary had a little Lamb") // false
+/lamb$/i.test("mary had a little lamb") // true
+/\d$/i.test("123 mary had a little lamb 123") // true
+
+Оба якоря вместе ^...$ часто используются для проверки, совпадает ли строка с
+шаблоном полностью. Например, чтобы определить, в правильном ли формате пользователь ввёл данные.
+
+/^\d\d:\d\d$/.test("12:34") // true
+
+=====
+
+Многострочный режим якорей ^ $, флаг "m"
+
+Многострочный режим включается флагом m. В нем ^ и $ означают не только начало/конец текста,
+но и начало/конец каждой строки в тексте.
+
+`1е место: Винни
+2е место: Пятачок
+3е место: Слонопотам`.match(/^\d/mg) // ["1", "2", "3"]
+
+`1е место: Винни
+2е место: Пятачок
+3е место: Слонопотам`.match(/^\d/g) // ["1"]
+
+`1е место: Винни 3
+2е место: Пятачок 5
+3е место: Слонопотам 6`.match(/\d$/mg)  // ["3", "5", "6"]
+
+`1е место: Винни 3
+2е место: Пятачок 5
+3е место: Слонопотам 6`.match(/\d$/g) // ["6"]
+
+=====
+
+Наборы и диапазоны
+
+[] - Поиск любого символа из набора
+
+"Вуля Валя".match(/В[уа]ля/g) // "Вуля", "Валя"
+"Вуаля Вауля".match(/В[уа]ля/g) // null
+
+[-] - поиск символа из диапазон
+"x1AF 0xAF xA1F".match(/x[0-9A-F][0-9A-F]/g) // "x1A", "xAF", "xA1"
+"x1-AF 0xAF xA-1F".match(/x[0-9A-F][0-9A-F]/g) // xAF
+
+[^…] - поиск запрещенных символов из набора или диапазона
+"x x1AF 0xAF xA1F".match(/x[^0-9A-F]/g) // "x "
+
+=====
+
+Квантификаторы
+
+{n} - количество символов в поиске
+
+1. точное количество
+
+"Мне 12345 лет".match(/\d{3}/g) // "123"
+
+2. диапазон
+
+"Мне не 12, а 345678 лет".match(/\d{3,}/) // "1234"
+"Мне не 12, а 345678 лет".match(/\d{3,}/) // "345678"
+"+7(903)-123-45-67".match(/\d{1,}/g) //
+
++ - один и более символов // ["7", "903", "123", "45", "67"]
+
+"+7(903)-123-45-67".match(/\d+/g) // ["7", "903", "123", "45", "67"]
+
+? - ноль или один. То же самое, что и {0,1}
+
+"Следует писать color или colour?".match(/colou?r/g) // ["color", "colour"]
+
+* - означает «ноль или более». То же самое, что и {0,}
+
+"100 10 1".match(/\d0*/g) // ["100", "10", "1"]
+
+=====
+
+Ленивый режим
+
+«Ленивый» режим противоположен «жадному». Он означает: «повторять
+квантификатор наименьшее количество раз».
+
+Мы можем включить его, вставив знак вопроса '?' после квантификатора,
+то есть будет *? или +? или даже ?? для '?'.
+
+'a "witch" and her "broom" is one'.match(/".+?"/g) //  [""witch"", ""broom""]
+
+=====
+
+Скобочные группы
+
+Часть шаблона можно заключить в скобки (...). Это называется «скобочная
+группа».
+
+У такого выделения есть два эффекта:
+
+1. Позволяет поместить часть совпадения в отдельный массив.
+2. Если установить квантификатор после скобок, то он будет применяться ко
+всему содержимому скобки, а не к одному символу.
+
+'Goooogogo now!'.match(/go+/gi)  // ["Goooo", "go", "go"]
+'Goooogogo now!'.match(/(go)+/gi) // ["Go", "gogo"]
+
+=====
+
+Альтернация (или) |
+
+"Сначала появился язык Java, затем HTML, потом JavaScript".match(/html|css|java(script)?/gi) // ["Java", "HTML", "JavaScript"]
+
+=====
+
+Опережающая проверка
+Синтаксис опережающей проверки: X(?=Y).
+
+Алгоритм работы следующий:
+1. Найти X
+2. Проверить, идёт ли Y сразу после X (если нет – не подходит).
+3. Если обе проверки прошли – совпадение найдено.
+
+Возможны и более сложные проверки, например X(?=Y)(?=Z) означает:
+
+1. Найти X.
+2. Проверить, идёт ли Y сразу после X (если нет – не подходит).
+3. Проверить, идёт ли Z сразу после X (если нет – не подходит).
+4. Если обе проверки прошли – совпадение найдено.
+
+Допустим, нам нужно узнать из этой же строки количество индеек, то есть число \d+, за которым следует знак €.
+"1 индейка стоит 30€".match(/\d+(?=€)/g) // ["30"]
+
+=====
+
+Негативная опережающая проверка
+Синтаксис: X(?!Y) ищет совпадение с X при условии, что после него нет Y
+
+Допустим, нам нужно узнать из этой же строки количество индеек, то есть число \d+, за которым НЕ следует знак €.
+"2 индейки стоят 60€".match(/\d+(?!€)/) // ["2"]
+
+=====
+
+Позитивная ретроспективная проверка
+
+Синтаксис: (?<=Y)X ищет совпадение с X при условии, что перед ним ЕСТЬ Y
+
+"1 индейка стоит $30".match(/(?<=\$)\d+/g) // ["30"]
+=====
+
+Негативная ретроспективная проверка
+
+Синтаксис: (?<!Y)X, ищет совпадение с X при условии, что перед ним НЕТ Y
+
+"2 индейки стоят $60".match(/(?<!\$)\d+/) // ["2"]
+
+Escape Characters
+\' — Single quote
+\" — Double quote
+\\ — Backslash
+\b — Backspace
+\f — Form feed
+\n — New line
+\r — Carriage return
+\t — Horizontal tabulator
+\v — Vertical tabulator
+
+Pattern Modifiers
+e — Evaluate replacement
+i — Perform case-insensitive matching
+g — Perform global matching
+m — Perform multiple line matching
+s — Treat strings as single line
+9 of 24
+x — Allow comments and whitespace in pattern
+U — Ungreedy pattern
+
+Brackets
+[abc] — Find any of the characters between the brackets
+[^abc] — Find any character not in the brackets
+[0-9] — Used to find any digit from 0 to 9
+[A-z] — Find any character from uppercase A to lowercase z
+(a|b|c) — Find any of the alternatives separated with |
+
+Metacharacters
+. — Find a single character, except newline or line terminator
+\w — Word character
+\W — Non-word character
+\d — A digit
+\D — A non-digit character
+\s — Whitespace character
+\S — Non-whitespace character
+\b — Find a match at the beginning/end of a word
+\B — A match not at the beginning/end of a word
+\0 — NUL character
+\n — A new line character
+\f — Form feed character
+\r — Carriage return character
+\t — Tab character
+\v — Vertical tab character
+\xxx — The character specified by an octal number xxx
+\xdd — Character specified by a hexadecimal number dd
+\uxxxx — The Unicode character specified by a hexadecimal number xxxx
+
+Quantifiers
+n+ — Matches any string that contains at least one n
+n* — Any string that contains zero or more occurrences of n
+n? — A string that contains zero or one occurrences of n
+n{X} — String that contains a sequence of X n’s
+n{X,Y} — Strings that contains a sequence of X to Y n’s
+n{X,} — Matches any string that contains a sequence of at least X n’s
+n$ — Any string with n at the end of it
+^n — String with n at the beginning of it
+?=n — Any string that is followed by a specific string n
+?!n — String that is not followed by a specific string n
